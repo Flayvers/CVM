@@ -2,7 +2,8 @@
 #include <iomanip>
 #include <string>
 #include <conio.h>
-#include ".\cvm 21.h"
+//#include "..\CVM_LIB\cvm 21.h"
+#include "..\cvm 21.h"
 
 using namespace::std;
 
