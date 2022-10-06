@@ -55,47 +55,34 @@ int main()
 	double coutProduction;
 	double coutTotal;
 
-	cout << left <<setw(36) << "Nombre d'originaux" << ": ";
+	cout << left << setw(36) << "Nombre d'originaux" << ": ";
 	cin >> nbOri;
 	cout << setw(36) << "Nombre d'exemplaires à reproduire" << ": ";
 	cin >> nbExe;
 
-	cout << "Format du papier :"  << endl
-		 << setw(8) << ""				<< "1. 8½x11" << endl
-		 << setw(8) << ""				<< "2. 8½x14" << endl
-		 << setw(8) << "" << setw(37)	<< "3. 11x17" << "Votre choix : ";
-	formatPapier = _getch();
+
+	cout << "Format du papier :" << endl
+		<< setw(8) << "" << "1. 8½x11" << endl
+		<< setw(8) << "" << "2. 8½x14" << endl
+		<< setw(8) << "" << setw(37) << "3. 11x17" << "Votre choix : ";
+	do
+	{
+		formatPapier = _getch();
+	} while (formatPapier != ('1' || '2' || '3'));
+
 	cout << formatPapier << endl << endl;
-
-	cout << "Type d'impression :" << endl
-		 << setw(8) << ""				<< "R. recto" << endl
-		 << setw(8) << "" << setw(37)	<< "V. recto - verso" << "Votre choix : ";
-	typeImpression = toupper(_getch());
-	cout << typeImpression << endl << endl;
-
-	cout << "Format du papier :" << endl
-		 << setw(8) << ""				<< "1. Repro + gris" << endl
-		 << setw(8) << ""				<< "2. Rolland évolution glacier" << endl
-		 << setw(8) << "" << setw(37)	<< "3. Wausau royal, fibre texte étain" << "Votre choix : ";
-	typePapier = _getch();
-	cout << typePapier << endl << endl;
-
-	cout << setw(45) << "Voulez-vous des documents perforés ? (O/N)" << "Votre choix : ";
-	aPerforer = toupper(_getch());
-	cout << aPerforer << endl << endl;
-
-	cout << "Format du papier :" << endl
-		 << setw(8) << ""				<< "1. Broche en coin" << endl
-		 << setw(8) << ""				<< "2. Encoller avec ruban" << endl
-		 << setw(8) << ""				<< "3. Tablettes" << endl
-		 << setw(8) << ""				<< "4. Broche à dos de cheval" << endl
-		 << setw(8) << "" << setw(44)	<< "5. Aucun" << "Votre choix : ";
-	typeFaconnage = _getch();
-	cout << typeFaconnage << endl << endl << endl;
-
-	cout << "Appuyez sur une touche pour continuer ...";
-	_getch();
-	clrscr();
+	if (nbOri != 1)
+	{
+		cout << "Type d'impression :" << endl
+			<< setw(8) << "" << "R. recto" << endl
+			<< setw(8) << "" << setw(37) << "V. recto - verso" << "Votre choix : ";
+		do {
+			typeImpression = toupper(_getch());
+			cout << typeImpression << endl << endl;
+		} while (typeImpression != ('R' || 'V'));
+	}
+	else
+		typeImpression = 'V';
 
 	switch (formatPapier)
 	{
@@ -118,12 +105,9 @@ int main()
 				nbImpRV = nbOri * nbExe / 2;
 			}
 		}
-		coutR = PRIX_8x11R / 1000 * nbImpR;
-		coutRV = PRIX_8x11RV / 1000 * nbImpRV;
-		break;
 	case '3':
 		switch (typeImpression)
-		{
+		{ 
 		case 'R':
 			if (nbOri % 2 == 1)
 			{
@@ -131,40 +115,117 @@ int main()
 				nbImpR = nbOri * nbExe / 2;
 				nbImpRV = 0;
 			}
-			break;
 		case 'V':
 			reste = nbOri % 4;
-			if(reste == 0)
+			if (reste == 0)
 			{
 				nbImpR = 0;
 				nbImpRV = nbOri * nbExe / 4;
 			}
-			else if(reste == 1 || reste == 2)
+			else if (reste == 1 || reste == 2)
 			{
 				nbImpR = nbExe;
-				nbImpRV = (nbOri - reste) * nbExe / 4;
+					nbImpRV = (nbOri - reste) * nbExe / 4;
 			}
-			else if (reste == 3)
+			else
 			{
 				nbImpR = 0;
 				nbImpRV = (nbOri + 1) * nbExe / 4;
 			}
-			break;
-		default:
-			cout << "informaton erronée";
-			exit(-1);
 		}
-		coutR = PRIX_11x17R / 1000 * nbImpR;
-		coutRV = PRIX_11x17RV / 1000 * nbImpRV;
-		break;
-	default:
-		cout << "informaton erronée";
-		exit(-1);
+	}
+
+	switch(formatPapier)
+	{
+	case '1':
+	case '2':
+		coutR = nbImpR * (PRIX_8x11R / 1000);
+		coutRV = nbImpRV * (PRIX_8x11RV / 1000);
+	case '3':
+		coutR = nbImpR * (PRIX_11x17R / 1000);
+		coutRV = nbImpRV * (PRIX_11x17RV / 1000);
+	}
+
+	cout << "Type de papier :" << endl
+		 << setw(8) << ""				<< "1. Repro + gris" << endl
+		 << setw(8) << ""				<< "2. Rolland évolution glacier" << endl
+		 << setw(8) << "" << setw(37)	<< "3. Wausau royal, fibre texte étain" << "Votre choix : ";
+	do {
+		typePapier = _getch();
+	} while (typePapier != ('1' || '2' || '3'));
+	cout << typePapier << endl << endl;
+
+	switch (typePapier)
+	{
+	case '1':
+		if (formatPapier == '1')
+		{
+			coutPapier = nbImpR + nbImpRV * ((PRIX_PAPIER_1 / 2) / 1000);
+		}
+		else
+		{
+			coutPapier = nbImpR + nbImpRV * (PRIX_PAPIER_1 / 1000);
+		}
+	case '2':
+		if (formatPapier == '1')
+		{
+			coutPapier = nbImpR + nbImpRV * ((PRIX_PAPIER_2 / 2) / 1000);
+		}
+		else
+		{
+			coutPapier = nbImpR + nbImpRV * (PRIX_PAPIER_2 / 1000);
+		}
+	case '3':
+		if (formatPapier == '1')
+		{
+			coutPapier = nbImpR + nbImpRV * ((PRIX_PAPIER_3 / 2) / 1000);
+		}
+		else
+		{
+			coutPapier = nbImpR + nbImpRV * (PRIX_PAPIER_3 / 1000);
+		}
 	}
 
 
+	cout << setw(45) << "Voulez-vous des documents perforés ? (O/N)" << "Votre choix : ";
+	do {
+		aPerforer = toupper(_getch());
+	} while (aPerforer != ('O' || 'N'));
+	cout << aPerforer << endl << endl;
 
+	if (aPerforer == 'O')
+	{
+		coutFaconnage = (nbImpR + nbImpRV) * PRIX_PERFORER;
+	}
 
+	if (nbOri != 1)
+	{
+		cout << "Type de faconnage :" << endl;
+		cout << setw(8) << "" << "1. Broche en coin" << endl;
+		cout << setw(8) << "" << "2. Encoller avec ruban" << endl;
+		cout << setw(8) << "" << "3. Tablettes" << endl;
+		cout << setw(8) << "" << "4. Broche à dos de cheval" << endl;
+		cout << setw(8) << "" << setw(44) << "5. Aucun" << "Votre choix : ";
+		do {
+			typeFaconnage = _getch();
+		} while (typeFaconnage != ('1' || '2' || '3' || '4' || '5'));
+		cout << typeFaconnage << endl << endl << endl;
+	}
+	else
+		typeFaconnage = '5';
+
+	switch (typeFaconnage)
+	{
+	case '1':
+	case '2':
+	case '3':
+	case '4':
+	default:
+	}
+
+	cout << "Appuyez sur une touche pour continuer ...";
+	_getch();
+	clrscr();
 
 
 	cout << endl << endl << endl << endl
@@ -174,14 +235,14 @@ int main()
 	cout << setw(34) << " Coût des impressions recto :" << setw(26) << coutR << endl;
 	cout << setw(34) << "Coût des impressions recto-verso :" << setw(26) << coutRV << endl << endl;
 
-	/*cout << setw(34) << " Coût du papier :" << setw(26) << coutPapier << endl;
+	cout << setw(34) << " Coût du papier :" << setw(26) << coutPapier << endl;
 	cout << setw(34) << " Coût du façonnage :" << setw(26) << coutFaconnage << endl << endl; 
 	cout << setw(34) << "" << setw(26) << "------------" << endl;
 
 	cout << setw(34) << " Coût de production :" << setw(26) << coutProduction << endl << endl;
 	cout << setw(34) << "" << setw(26) << "============" << endl;
 
-	cout << setw(34) << "Coût total :" << coutTotal;*/
+	cout << setw(34) << "Coût total :" << coutTotal;
 
 	_getch();
 }
