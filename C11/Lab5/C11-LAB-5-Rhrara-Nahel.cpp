@@ -65,10 +65,8 @@ int main()
 		<< setw(8) << "" << "1. 8½x11" << endl
 		<< setw(8) << "" << "2. 8½x14" << endl
 		<< setw(8) << "" << setw(37) << "3. 11x17" << "Votre choix : ";
-	do
-	{
+
 		formatPapier = _getch();
-	} while (formatPapier != ('1' || '2' || '3'));
 
 	cout << formatPapier << endl << endl;
 	if (nbOri != 1)
@@ -76,10 +74,9 @@ int main()
 		cout << "Type d'impression :" << endl
 			<< setw(8) << "" << "R. recto" << endl
 			<< setw(8) << "" << setw(37) << "V. recto - verso" << "Votre choix : ";
-		do {
+
 			typeImpression = toupper(_getch());
 			cout << typeImpression << endl << endl;
-		} while (typeImpression != ('R' || 'V'));
 	}
 	else
 		typeImpression = 'V';
@@ -93,6 +90,7 @@ int main()
 		case 'R':
 			nbImpR = nbOri * nbExe;
 			nbImpRV = 0;
+			break;
 		case 'V':
 			if (nbOri % 2 == 1)
 			{
@@ -104,7 +102,9 @@ int main()
 				nbImpR = 0;
 				nbImpRV = nbOri * nbExe / 2;
 			}
+			break;
 		}
+		break;
 	case '3':
 		switch (typeImpression)
 		{ 
@@ -132,7 +132,11 @@ int main()
 				nbImpR = 0;
 				nbImpRV = (nbOri + 1) * nbExe / 4;
 			}
+		break;
 		}
+	default:
+		nbImpR = 0;
+		nbImpRV = 0;
 	}
 
 	switch(formatPapier)
@@ -141,18 +145,19 @@ int main()
 	case '2':
 		coutR = nbImpR * (PRIX_8x11R / 1000);
 		coutRV = nbImpRV * (PRIX_8x11RV / 1000);
+		break;
 	case '3':
 		coutR = nbImpR * (PRIX_11x17R / 1000);
 		coutRV = nbImpRV * (PRIX_11x17RV / 1000);
+		break;
 	}
 
 	cout << "Type de papier :" << endl
 		 << setw(8) << ""				<< "1. Repro + gris" << endl
 		 << setw(8) << ""				<< "2. Rolland évolution glacier" << endl
 		 << setw(8) << "" << setw(37)	<< "3. Wausau royal, fibre texte étain" << "Votre choix : ";
-	do {
-		typePapier = _getch();
-	} while (typePapier != ('1' || '2' || '3'));
+
+	typePapier = _getch();
 	cout << typePapier << endl << endl;
 
 	switch (typePapier)
@@ -166,37 +171,35 @@ int main()
 		{
 			coutPapier = nbImpR + nbImpRV * (PRIX_PAPIER_1 / 1000);
 		}
+		break;
 	case '2':
 		if (formatPapier == '1')
-		{
 			coutPapier = nbImpR + nbImpRV * ((PRIX_PAPIER_2 / 2) / 1000);
-		}
 		else
-		{
 			coutPapier = nbImpR + nbImpRV * (PRIX_PAPIER_2 / 1000);
-		}
+		break;
 	case '3':
 		if (formatPapier == '1')
-		{
 			coutPapier = nbImpR + nbImpRV * ((PRIX_PAPIER_3 / 2) / 1000);
-		}
 		else
-		{
 			coutPapier = nbImpR + nbImpRV * (PRIX_PAPIER_3 / 1000);
-		}
+		break;
+	default:
+		coutPapier = 0;
 	}
 
 
 	cout << setw(45) << "Voulez-vous des documents perforés ? (O/N)" << "Votre choix : ";
-	do {
+
 		aPerforer = toupper(_getch());
-	} while (aPerforer != ('O' || 'N'));
 	cout << aPerforer << endl << endl;
 
 	if (aPerforer == 'O')
 	{
-		coutFaconnage = (nbImpR + nbImpRV) * PRIX_PERFORER;
+		coutFaconnage = (double(nbImpR) + double(nbImpRV)) * (PRIX_PERFORER / 1000);
 	}
+	else 
+		coutFaconnage = 0;
 
 	if (nbOri != 1)
 	{
@@ -206,9 +209,8 @@ int main()
 		cout << setw(8) << "" << "3. Tablettes" << endl;
 		cout << setw(8) << "" << "4. Broche à dos de cheval" << endl;
 		cout << setw(8) << "" << setw(44) << "5. Aucun" << "Votre choix : ";
-		do {
-			typeFaconnage = _getch();
-		} while (typeFaconnage != ('1' || '2' || '3' || '4' || '5'));
+
+		typeFaconnage = _getch();
 		cout << typeFaconnage << endl << endl << endl;
 	}
 	else
@@ -217,11 +219,26 @@ int main()
 	switch (typeFaconnage)
 	{
 	case '1':
+		coutFaconnage += (double(nbImpR) + double(nbImpRV)) * PRIX_BROCHE;
+		break;
 	case '2':
+		if (formatPapier == '1' || formatPapier == '2')
+			coutFaconnage += (double(nbImpR) + double(nbImpRV)) * PRIX_ENCOLLER;
+		break;
 	case '3':
+		coutFaconnage += (double(nbImpR) + double(nbImpRV)) * PRIX_TABLETTE;
+		break;
 	case '4':
+		if (formatPapier == 3)
+			coutFaconnage += (double(nbImpR) + double(nbImpRV)) * PRIX_DOSCHEVAL;
+		break;
 	default:
+		coutFaconnage += 0;
 	}
+
+	coutProduction = (double(nbImpR) + double(nbImpRV) + double(coutPapier)) + coutFaconnage;
+	coutTotal = coutProduction + (coutProduction * TVQ + coutProduction * TPS);
+
 
 	cout << "Appuyez sur une touche pour continuer ...";
 	_getch();
@@ -233,7 +250,7 @@ int main()
 		 << endl << endl << endl;
 
 	cout << setw(34) << " Coût des impressions recto :" << setw(26) << coutR << endl;
-	cout << setw(34) << "Coût des impressions recto-verso :" << setw(26) << coutRV << endl << endl;
+	cout << setw(34) << " Coût des impressions recto-verso :" << setw(26) << coutRV << endl << endl;
 
 	cout << setw(34) << " Coût du papier :" << setw(26) << coutPapier << endl;
 	cout << setw(34) << " Coût du façonnage :" << setw(26) << coutFaconnage << endl << endl; 
